@@ -1,31 +1,15 @@
 from collections.abc import Generator
-from pathlib import Path
 
 import pygame
-from pydantic import BaseModel
+from parameters import Parameters
+from positioner import NoneTouching
 
 GREY = (200, 200, 200)
 RED = (255, 0, 0)
 
 
-class Parameters(BaseModel):
-    tile_width: int = 50
-    tile_height: int = int(tile_width * 1.5)
-    num_pairs: int = 2
-    num_tiles: int = num_pairs * 2
-    x_offset: int = 50  # space between left/right edge and tile
-    y_offset: int = 50  # space between top/bottom edge and tile
-    x_space: int = 20  # space between tiles in x direction
-    y_space: int = 20  # space between tiles in y direction
-    rows: int = num_pairs  # number of rows
-    cols: int = 2  # number of columns
-    canvas_width: int = x_offset * 2 + tile_width * cols + x_space * (cols - 1)
-    canvas_height: int = y_offset * 2 + tile_height * rows + y_space * (rows - 1)
-
-
 class Game:
     def __init__(self) -> None:
-        self.params = Parameters()
         pygame.init()
 
     def __enter__(self) -> "Game":
@@ -46,31 +30,32 @@ class Game:
 
 class Tiles:
     def __init__(self) -> None:
-        self.params = Parameters()
         self.get_tiles()
 
     def get_tiles(self) -> None:
-        self.tiles: list[Tile] = []
-
-        for col in range(self.params.cols):
-            for row in range(self.params.rows):
-                self.tiles.append(
-                    Tile(
-                        self.params.x_offset + (self.params.tile_width + self.params.x_space) * col,
-                        self.params.y_offset + (self.params.tile_height + self.params.y_space) * row,
-                    )
-                )
+        self.tiles: list[Tile] = [Tile(i, *p) for i, p in enumerate(NoneTouching.positions)]
 
 
 class Tile:
-    def __init__(self, x_offset: int, y_offset: int) -> None:
+    def __init__(self, index: int, x_offset: int, y_offset: int) -> None:
         self.params = Parameters()
-        self.color = RED
-        self.img = pygame.image.load(Path(Path(__file__).parent.parent.joinpath("tiles", "Chun.png")))
-        self.img.convert()
-        self.img = pygame.transform.scale(self.img, (self.params.tile_width, self.params.tile_height))
-        self.rect = self.img.get_rect()
-        self.rect.topleft = (x_offset, y_offset)
+        self.id = index
+        self.x_offset: int = x_offset
+        self.y_offset: int = y_offset
+        self.width: int = self.params.tile_width
+        self.height: int = self.params.tile_height
+        self.color = RED  # use background color to have frame color seem transparent
+        self.get_face()
+        self.get_outline()
+
+    def get_face(self) -> None:
+        self.face = pygame.image.load(self.params.tiles_path.joinpath("Front.png"))
+        self.face.convert()  # optimize image format and make drawing faster
+        self.face = pygame.transform.scale(self.face, (self.width, self.height))
+
+    def get_outline(self) -> None:
+        self.outline = self.face.get_rect()
+        self.outline.topleft = (self.x_offset, self.y_offset)
 
 
 class Screen:
@@ -79,15 +64,15 @@ class Screen:
         self.get_screen()
         self.draw_background()
 
-    def get_screen(self, size: tuple[int, int] = (800, 600)) -> None:
+    def get_screen(self) -> None:
         self.screen = pygame.display.set_mode((self.params.canvas_width, self.params.canvas_height))
 
     def draw_background(self) -> None:
         self.screen.fill(GREY)
 
     def draw_tile(self, tile: Tile) -> None:
-        pygame.draw.rect(self.screen, tile.color, tile.rect, 1)
-        self.screen.blit(tile.img, tile.rect)
+        pygame.draw.rect(self.screen, tile.color, tile.outline, 1, 5)
+        self.screen.blit(tile.face, tile.outline)
 
 
 if __name__ == "__main__":
