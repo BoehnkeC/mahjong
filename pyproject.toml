@@ -1,0 +1,45 @@
+[tool.ruff]
+lint.select = [
+    "E", # pycodestyle
+    "F", # pyflakes
+    "A", # builtins
+    "B", # bugbear
+    "I", # isort
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "SIM", # flake8-simplify
+    "RUF200", # Failed to parse pyproject.toml
+]
+
+lint.fixable = [ "I" ] # only auto-fix isort rules
+
+line-length = 119
+
+# Assume Python 3.12.
+target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+# Do not inforce usage and import order rules in init files
+"__init__.py" = [ "F403" ]
+
+[tool.pytest.ini_options]
+testpaths = [ "tests" ]
+
+[project]
+name = "mahjong"
+version = "0.1.0"
+description = "Play Mahjong in Python"
+authors = [
+    { name = "Christian Krullikowski", email = "christian@home-boehnke.de" },
+]
+readme = "README.md"
+dependencies = [ "pydantic>=2.8.2", "loguru>=0.7.2", "pygame>=2.6.1" ]
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "ruff==0.8.2", # make sure this aligns with pre-commit & CI
+    "pre-commit>=4.0.1",
+    "pytest>=8.3.3",
+    "pytest-env>=1.1.5",
+]
