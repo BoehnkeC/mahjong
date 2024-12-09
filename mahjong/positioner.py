@@ -6,7 +6,7 @@ Notion is:
     - --> a gap between tiles
 ."""
 
-from parameters import Parameters
+from .parameters import Parameters
 
 
 class NoneTouching:

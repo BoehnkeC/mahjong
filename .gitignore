@@ -1,3 +1,4 @@
 doc.md
 .DS_STORE
 __pycache__/
+.vscode/
