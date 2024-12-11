@@ -6,8 +6,6 @@ Notion is:
     - --> a gap between tiles
 ."""
 
-from .parameters import Parameters
-
 
 class NoneTouching:
     """TEST: Contains 2 pairs of tiles that do not touch.
@@ -18,13 +16,8 @@ class NoneTouching:
     =====
     """
 
-    p = Parameters()
-    positions = []
-    for col in range(p.cols):
-        for row in range(p.rows):
-            positions.append(
-                (
-                    p.x_offset + (p.tile_width + p.x_space) * col,
-                    p.y_offset + (p.tile_height + p.y_space) * row,
-                )
-            )
+    ul = (50, 50)
+    ur = (120, 50)
+    lr = (120, 145)
+    ll = (50, 145)
+    positions = [ul, ur, lr, ll]

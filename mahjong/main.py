@@ -3,6 +3,7 @@ import sys
 import pygame
 
 from .positioner import NoneTouching
+from .rules import Rules
 from .screen import Screen
 from .tiles import Tiles
 
@@ -17,6 +18,7 @@ class Game:
         self.running: bool = True
         self.screen = Screen()
         self.tiles = Tiles()
+        self.rules = Rules()
 
     def __enter__(self) -> "Game":
         return self
@@ -38,6 +40,7 @@ class Game:
 
                 for tile in self.tiles.tiles:
                     tile.check_event(event)
+                    self.tiles.selected = tile.check_rules(self.tiles.selected)
 
             self.screen.draw_background()
             self.draw_tiles()
