@@ -38,11 +38,14 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.running = False
 
-                for tile in self.tiles.tiles:
-                    tile.check_event(event)
-                    self.tiles.selected = tile.check_rules(self.tiles.selected)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.tiles.check_event(event)
+                    self.screen.check_selected(event, self.tiles.selected_tiles)
 
-            self.screen.draw_background()
+                    if self.screen.selected:
+                        self.tiles.deselect()  # deselect all tiles as screen has been selected
+
+            # self.screen.draw_background()
             self.draw_tiles()
             pygame.display.update()  # update the screen to show the color
 
