@@ -23,22 +23,32 @@ class Tiles:
         for tile in self.tiles:
             tile.check_selected(event)
 
-            if tile.selected:
-                print(f"Selected {tile.x_offset, tile.y_offset}")
+            if tile.selected:  # tile was selected
                 self.selected_tiles.append(tile)
 
                 # due to the way events are handled, the selected tiles are appended multiple times
                 self.selected_tiles = list(dict.fromkeys(self.selected_tiles))
                 self.rules.check_rules(len(self.selected_tiles))
 
-            if self.rules.broken:
-                print(self.rules.reason)
+            else:  # tile was selected before and is now deselected
+                if tile in self.selected_tiles:
+                    self.selected_tiles.remove(tile)
+
+    def check_rules(self) -> None:
+        if self.rules.broken:
+            self.deselect()
+            print(self.rules.reason)
+
+        self.rules.broken = False
 
     def deselect(self) -> None:
         """Deselect all tiles."""
         for tile in self.tiles:
-            tile.selected = False
-            self.selected_tiles = []
+            print(tile)
+            if tile.selected:
+                tile.deselect()
+                self.selected_tiles.remove(tile)
+        print()
 
 
 class Tile:
@@ -55,13 +65,28 @@ class Tile:
 
         if draw:
             self.get_face()
+            self.overlay()
             self.get_outline()
 
     def get_face(self) -> None:
         """Get the tile face, i.e. a drawable area entity."""
-        self.face = pygame.image.load(self.params.tiles_path.joinpath("Front.png"))
-        self.face.convert()  # optimize image format and make drawing faster
+        # load image and optimize with convert
+        self.face = pygame.image.load(self.params.tiles_path.joinpath("Chun.png"))
+        self.face = self.face.convert_alpha()
         self.face = pygame.transform.scale(self.face, (self.width, self.height))
+
+    def overlay(self) -> None:
+        """Get the tiles transparent overlay used for selection."""
+        self.overlay = pygame.Surface(self.face.get_size(), pygame.SRCALPHA, 32)
+        self.overlay = self.overlay.convert_alpha()
+        self.overlay.fill((255, 255, 81, 120))
+
+    def remove_overlay(self) -> None:
+        """Remove the tiles transparent overlay."""
+        self.overlay()
+        # self.overlay = pygame.Surface(self.face.get_size(), pygame.SRCALPHA, 32)
+        # self.overlay = self.overlay.convert_alpha()
+        # self.overlay.fill((255, 255, 255, 255))
 
     def get_outline(self) -> None:
         """Get outline coordinates of the tile."""
@@ -70,6 +95,14 @@ class Tile:
 
     def check_selected(self, event: pygame.event.Event) -> None:
         """Check if the mouse button was pressed.
-        Select the tile if the position is within the tile bounding box."""
-        if self.outline.collidepoint(event.pos):
+        Select the tile if the position is within the tile bounding box and the tile has not been selected before.
+        If the tile has been selected before, deselect it."""
+        if not self.selected and self.outline.collidepoint(event.pos):
             self.selected = True
+
+        elif self.selected and self.outline.collidepoint(event.pos):
+            # TODO: this also selects the screen
+            self.selected = False
+
+    def deselect(self) -> None:
+        self.selected = False

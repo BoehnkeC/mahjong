@@ -30,10 +30,17 @@ class Screen:
     def draw_tile_face(self, tile: Tile) -> None:
         self.screen.blit(tile.face, tile.outline)
 
+    def draw_tile_overlay(self, tiles: Tiles) -> None:
+        """Tile was selected and gets a transparent yellow overlay."""
+        for tile in tiles:
+            if tile.selected:
+                self.screen.blit(tile.overlay, tile.outline.topleft)
+
     def get_rectangle(self) -> None:
         self.rectangle = self.screen.get_rect()
 
     def check_selected(self, event: pygame.event.Event, tiles: Tiles) -> None:
+        """Check if the screen instead of a tile was selected."""
         if self.rectangle.collidepoint(event.pos) and not any(
             [tile.outline.collidepoint(event.pos) for tile in tiles]
         ):

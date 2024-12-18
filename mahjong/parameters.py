@@ -16,4 +16,5 @@ class Parameters(BaseModel):
     cols: int = 2  # number of columns
     canvas_width: int = x_offset * 2 + tile_width * cols + x_space * (cols - 1)
     canvas_height: int = y_offset * 2 + tile_height * rows + y_space * (rows - 1)
-    tiles_path: Path = Path(__file__).parent.parent.joinpath("tiles")
+    # tiles_path: Path = Path(__file__).parent.parent.joinpath("tiles")
+    tiles_path: Path = Path("/Users/chris/Pictures")
