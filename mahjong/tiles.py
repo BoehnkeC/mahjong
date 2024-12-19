@@ -21,18 +21,21 @@ class Tiles:
     def check_event(self, event: pygame.event.Event):
         # self.selected: int = 0
         for tile in self.tiles:
-            tile.check_selected(event)
+            if tile.check_clicked(event):  # tile was clicked
+                if tile.selected:  # tile got clicked and selected
+                    self.selected_tiles.append(tile)
 
-            if tile.selected:  # tile was selected
-                self.selected_tiles.append(tile)
+                    # due to the way events are handled, the selected tiles are appended multiple times
+                    self.selected_tiles = list(dict.fromkeys(self.selected_tiles))
+                    self.rules.check_rules(len(self.selected_tiles))
 
-                # due to the way events are handled, the selected tiles are appended multiple times
-                self.selected_tiles = list(dict.fromkeys(self.selected_tiles))
-                self.rules.check_rules(len(self.selected_tiles))
-
-            else:  # tile was selected before and is now deselected
-                if tile in self.selected_tiles:
+                else:  # tile got clicked but deselected
+                    print(f"Tile {tile.id} got clicked and gets deselected now.")
                     self.selected_tiles.remove(tile)
+
+            # else:  # tile was selected before and is now deselected
+            #     if tile in self.selected_tiles:
+            #         self.selected_tiles.remove(tile)
 
     def check_rules(self) -> None:
         if self.rules.broken:
@@ -44,11 +47,11 @@ class Tiles:
     def deselect(self) -> None:
         """Deselect all tiles."""
         for tile in self.tiles:
-            print(tile)
             if tile.selected:
                 tile.deselect()
                 self.selected_tiles.remove(tile)
-        print()
+                print(f"I'm in Tiles deselect. Tile ID: {tile.id}")
+                print(f"I'm in Tiles deselect. selected tiles after deselection: {tile.selected}")
 
 
 class Tile:
@@ -60,7 +63,7 @@ class Tile:
         self.width: int = self.params.tile_width
         self.height: int = self.params.tile_height
         self.color = RED  # use background color to have frame color seem transparent
-        self.selected = False
+        self.selected = False  # selection is a persistent state until deselection
         self.rules = Rules()  # rule set applies per tile
 
         if draw:
@@ -93,16 +96,20 @@ class Tile:
         self.outline = self.face.get_rect()
         self.outline.topleft = (self.x_offset, self.y_offset)
 
-    def check_selected(self, event: pygame.event.Event) -> None:
+    def check_clicked(self, event: pygame.event.Event) -> None:
         """Check if the mouse button was pressed.
         Select the tile if the position is within the tile bounding box and the tile has not been selected before.
         If the tile has been selected before, deselect it."""
         if not self.selected and self.outline.collidepoint(event.pos):
             self.selected = True
+            print(self.id)
+            return True  # return True because tile was clicked
 
         elif self.selected and self.outline.collidepoint(event.pos):
             # TODO: this also selects the screen
-            self.selected = False
+            print(self.id)
+            self.deselect()
+            return True  # return True because tile was clicked
 
     def deselect(self) -> None:
         self.selected = False

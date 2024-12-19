@@ -35,7 +35,6 @@ class Game:
         self.tiles.get_tiles(positions=NoneTouching.positions)
 
         while self.running:
-            mouse = pygame.mouse.get_pos()
             self.draw_tiles()
 
             for event in pygame.event.get():
@@ -45,15 +44,14 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left mouse click
                     self.tiles.check_event(event)
                     self.tiles.check_rules()
-                    self.screen.check_selected(event, self.tiles.selected_tiles)
+                    print([tile.id for tile in self.tiles.selected_tiles])
+                    self.screen.check_event(event, self.tiles.tiles)
 
             self.screen.draw_tile_overlay(self.tiles.selected_tiles)
 
             if self.screen.selected:
                 self.tiles.deselect()  # deselect all tiles as screen has been selected
 
-            # self.screen.draw_background()
-            # self.draw_tiles()
             pygame.display.update()  # update the screen to show the color
 
     def draw_tiles(self) -> None:
