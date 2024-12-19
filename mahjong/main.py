@@ -44,7 +44,6 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left mouse click
                     self.tiles.check_event(event)
                     self.tiles.check_rules()
-                    print([tile.id for tile in self.tiles.selected_tiles])
                     self.screen.check_event(event, self.tiles.tiles)
 
             self.screen.draw_tile_overlay(self.tiles.selected_tiles)

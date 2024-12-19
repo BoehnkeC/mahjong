@@ -30,12 +30,7 @@ class Tiles:
                     self.rules.check_rules(len(self.selected_tiles))
 
                 else:  # tile got clicked but deselected
-                    print(f"Tile {tile.id} got clicked and gets deselected now.")
                     self.selected_tiles.remove(tile)
-
-            # else:  # tile was selected before and is now deselected
-            #     if tile in self.selected_tiles:
-            #         self.selected_tiles.remove(tile)
 
     def check_rules(self) -> None:
         if self.rules.broken:
@@ -46,12 +41,9 @@ class Tiles:
 
     def deselect(self) -> None:
         """Deselect all tiles."""
-        for tile in self.tiles:
-            if tile.selected:
-                tile.deselect()
-                self.selected_tiles.remove(tile)
-                print(f"I'm in Tiles deselect. Tile ID: {tile.id}")
-                print(f"I'm in Tiles deselect. selected tiles after deselection: {tile.selected}")
+        for tile in reversed(self.selected_tiles):
+            tile.deselect()
+            self.selected_tiles.remove(tile)
 
 
 class Tile:
@@ -102,12 +94,9 @@ class Tile:
         If the tile has been selected before, deselect it."""
         if not self.selected and self.outline.collidepoint(event.pos):
             self.selected = True
-            print(self.id)
             return True  # return True because tile was clicked
 
         elif self.selected and self.outline.collidepoint(event.pos):
-            # TODO: this also selects the screen
-            print(self.id)
             self.deselect()
             return True  # return True because tile was clicked
 
