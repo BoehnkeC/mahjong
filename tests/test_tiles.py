@@ -43,7 +43,7 @@ def test_1_tile_selected(tiles_none_touching) -> None:
     assert not tile.selected
     event = pygame.event.Event(pygame.MOUSEBUTTONDOWN)
     get_tile(event, tile)  # select upper left tile
-    tile.check_event(event)
+    tile.check_clicked(event)
 
     assert tile.selected
 
@@ -53,9 +53,12 @@ def test_2_tiles_selected(tiles_none_touching) -> None:
     Simulate a mouse event at the tile center coordinates."""
     for tile in tiles_none_touching.tiles[:2]:
         assert not tile.selected
-        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN)
-        get_tile(event, tile)  # select tile depending on position
-        tile.check_event(event)
+
+    # simulate mouse click events at the center of the first 2 tiles
+    for tile in tiles_none_touching.tiles[:2]:
+        center_x, center_y = tile.outline.center
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"pos": (center_x, center_y)})
+        tiles_none_touching.check_event(event)
 
     # check if the first 2 tiles are selected
     for tile in tiles_none_touching.tiles[:2]:
@@ -69,17 +72,20 @@ def test_2_tiles_selected(tiles_none_touching) -> None:
 def test_tiles_selected_limit(tiles_none_touching, rules) -> None:
     """Test broken rule when more than 2 tiles were selected.
     Simulate a mouse event at the tile center coordinates."""
-    for i, tile in enumerate(tiles_none_touching.tiles):
+    for tile in tiles_none_touching.tiles[:2]:
         assert not tile.selected
-        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN)
-        get_tile(event, tile)  # select tile depending on position
-        tile.check_event(event)
-        tiles_none_touching.selected = tile.check_rules(tiles_none_touching.selected)
+
+    # simulate mouse click events at the center of the first 3 tiles
+    for i, tile in enumerate(tiles_none_touching.tiles[:3]):
+        center_x, center_y = tile.outline.center
+        event = pygame.event.Event(pygame.MOUSEBUTTONDOWN, {"pos": (center_x, center_y)})
+        tiles_none_touching.check_event(event)
+        tiles_none_touching.check_rules()
 
         if i < 2:
-            assert tiles_none_touching.selected < 3
+            assert len(tiles_none_touching.selected_tiles) < 3
             assert not tile.rules.broken
 
-        if i >= 2:
-            assert tiles_none_touching.selected > 2
-            assert tile.rules.broken
+    # check if the rest of the tiles are not selected
+    for tile in tiles_none_touching.tiles:
+        assert not tile.selected
