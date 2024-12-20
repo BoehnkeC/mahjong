@@ -1,7 +1,7 @@
 import pygame
 
 from .parameters import Parameters
-from .rules import Rules
+from .rules import Distribution, Rules
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -27,15 +27,19 @@ class Tiles:
 
                     # due to the way events are handled, the selected tiles are appended multiple times
                     self.selected_tiles = list(dict.fromkeys(self.selected_tiles))
-                    self.rules.check_rules(len(self.selected_tiles))
+                    self.rules.check_rules(self.selected_tiles)
 
                 else:  # tile got clicked but deselected
                     self.selected_tiles.remove(tile)
 
     def check_rules(self) -> None:
         if self.rules.broken:
-            self.deselect()
-            print(self.rules.reason)
+            if self.rules.reason == Distribution.limit:
+                self.deselect()
+
+            elif self.rules.reason == Distribution.pair:
+                self.selected_tiles[0].deselect()
+                self.selected_tiles.remove(self.selected_tiles[0])
 
         self.rules.broken = False
 
@@ -45,18 +49,23 @@ class Tiles:
             tile.deselect()
             self.selected_tiles.remove(tile)
 
+    def check_selections(self) -> None:
+        """Check if having valid selections, i.e. a pair of tiles."""
+        if not self.rules.broken and len(self.selected_tiles) == 2:
+            pass
+
 
 class Tile:
     def __init__(self, index: int, x_offset: int, y_offset: int, draw: bool = True) -> None:
         self.params = Parameters()
         self.id = index
+        self.name: str | None = None  # name of the tile, equivalent to the image file name
         self.x_offset: int = x_offset
         self.y_offset: int = y_offset
         self.width: int = self.params.tile_width
         self.height: int = self.params.tile_height
         self.color = RED  # use background color to have frame color seem transparent
         self.selected = False  # selection is a persistent state until deselection
-        self.rules = Rules()  # rule set applies per tile
 
         if draw:
             self.get_face()
@@ -69,6 +78,7 @@ class Tile:
         self.face = pygame.image.load(self.params.tiles_path.joinpath("Chun.png"))
         self.face = self.face.convert_alpha()
         self.face = pygame.transform.scale(self.face, (self.width, self.height))
+        self.name = "chun"
 
     def overlay(self) -> None:
         """Get the tiles transparent overlay used for selection."""

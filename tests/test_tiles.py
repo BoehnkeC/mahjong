@@ -2,7 +2,7 @@ import pygame
 import pytest
 
 from mahjong.positioner import NoneTouching
-from mahjong.rules import Rules
+from mahjong.rules import Distribution, Rules
 from mahjong.screen import Screen
 from mahjong.tiles import Tile, Tiles
 
@@ -84,7 +84,10 @@ def test_tiles_selected_limit(tiles_none_touching, rules) -> None:
 
         if i < 2:
             assert len(tiles_none_touching.selected_tiles) < 3
-            assert not tile.rules.broken
+            assert not tiles_none_touching.rules.broken
+
+        if i == 2:
+            assert tiles_none_touching.rules.reason == Distribution.limit
 
     # check if the rest of the tiles are not selected
     for tile in tiles_none_touching.tiles:

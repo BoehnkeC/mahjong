@@ -51,6 +51,8 @@ class Game:
             if self.screen.selected:
                 self.tiles.deselect()  # deselect all tiles as screen has been selected
 
+            self.tiles.check_selections()  # check is having valid selections
+
             pygame.display.update()  # update the screen to show the color
 
     def draw_tiles(self) -> None:
