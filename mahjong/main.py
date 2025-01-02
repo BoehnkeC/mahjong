@@ -44,14 +44,9 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left mouse click
                     self.tiles.check_event(event)
                     self.tiles.check_rules()
-                    self.screen.check_event(event, self.tiles.tiles)
+                    self.screen.check_event(event, self.tiles)
 
             self.screen.draw_tile_overlay(self.tiles.selected_tiles)
-
-            if self.screen.selected:
-                self.tiles.deselect()  # deselect all tiles as screen has been selected
-
-            self.tiles.check_selections()  # check is having valid selections
 
             pygame.display.update()  # update the screen to show the color
 

@@ -40,9 +40,16 @@ class Screen:
         self.rectangle = self.screen.get_rect()
 
     def check_event(self, event: pygame.event.Event, tiles: Tiles) -> None:
-        """Check if the screen instead of a tile was selected."""
+        """Check if the screen instead of a tile was selected.
+        It follows the same logic as for the tile selection, keeping continuity."""
+        if self.check_clicked(event, tiles):
+            tiles.deselect()  # deselect all tiles as screen has been selected
+
+    def check_clicked(self, event: pygame.event.Event, tiles: Tiles) -> bool:
+        """Check if the screen was selected through a mouse button event."""
         if self.rectangle.collidepoint(event.pos) and not any(
-            [tile.outline.collidepoint(event.pos) for tile in tiles]
+            [tile.outline.collidepoint(event.pos) for tile in tiles.tiles]
         ):
             self.selected = True
             print("Selected screen")
+            return True

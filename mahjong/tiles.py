@@ -19,7 +19,7 @@ class Tiles:
         self.tiles = [Tile(i, *p, draw=draw) for i, p in enumerate(positions)]
 
     def check_event(self, event: pygame.event.Event):
-        # self.selected: int = 0
+        """Check if a tile was selected through a mouse button event."""
         for tile in self.tiles:
             if tile.check_clicked(event):  # tile was clicked
                 if tile.selected:  # tile got clicked and selected
@@ -49,11 +49,6 @@ class Tiles:
             tile.deselect()
             self.selected_tiles.remove(tile)
 
-    def check_selections(self) -> None:
-        """Check if having valid selections, i.e. a pair of tiles."""
-        if not self.rules.broken and len(self.selected_tiles) == 2:
-            pass
-
 
 class Tile:
     def __init__(self, index: int, x_offset: int, y_offset: int, draw: bool = True) -> None:
@@ -75,7 +70,7 @@ class Tile:
     def get_face(self) -> None:
         """Get the tile face, i.e. a drawable area entity."""
         # load image and optimize with convert
-        self.face = pygame.image.load(self.params.tiles_path.joinpath("Chun.png"))
+        self.face = pygame.image.load(self.params.tiles_path.joinpath("hongzhong.png"))
         self.face = self.face.convert_alpha()
         self.face = pygame.transform.scale(self.face, (self.width, self.height))
         self.name = "chun"
@@ -86,19 +81,12 @@ class Tile:
         self.overlay = self.overlay.convert_alpha()
         self.overlay.fill((255, 255, 81, 120))
 
-    def remove_overlay(self) -> None:
-        """Remove the tiles transparent overlay."""
-        self.overlay()
-        # self.overlay = pygame.Surface(self.face.get_size(), pygame.SRCALPHA, 32)
-        # self.overlay = self.overlay.convert_alpha()
-        # self.overlay.fill((255, 255, 255, 255))
-
     def get_outline(self) -> None:
         """Get outline coordinates of the tile."""
         self.outline = self.face.get_rect()
         self.outline.topleft = (self.x_offset, self.y_offset)
 
-    def check_clicked(self, event: pygame.event.Event) -> None:
+    def check_clicked(self, event: pygame.event.Event) -> bool:
         """Check if the mouse button was pressed.
         Select the tile if the position is within the tile bounding box and the tile has not been selected before.
         If the tile has been selected before, deselect it."""
