@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class Parameters(BaseModel):
     tile_width: int = 50
     tile_height: int = int(tile_width * 1.5)
-    num_pairs: int = 2
+    num_pairs: int = 6
     num_tiles: int = num_pairs * 2
     x_offset: int = 50  # space between left/right edge and tile
     y_offset: int = 50  # space between top/bottom edge and tile

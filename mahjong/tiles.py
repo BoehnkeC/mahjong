@@ -10,7 +10,6 @@ RED = (255, 0, 0)
 class Tiles:
     def __init__(self) -> None:
         self.tiles: list[Tile] | None = None
-        # self.selected: int = 0  # number of selected tiles, must nood exceed selection limit of 2
         self.rules = Rules()  # rule set applies per tile
         self.selected_tiles: list = []
 

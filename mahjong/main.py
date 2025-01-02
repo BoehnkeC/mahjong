@@ -2,7 +2,7 @@ import sys
 
 import pygame
 
-from .positioner import NoneTouching
+from .positioner import NoneTouching, OneLevelTouching
 from .rules import Rules
 from .screen import Screen
 from .tiles import Tiles
@@ -16,8 +16,9 @@ class Game:
         pygame.init()
         self.event: pygame.event.Event | None = None
         self.running: bool = True
+        self.positions: object = OneLevelTouching()
 
-        self.screen = Screen()
+        self.screen = Screen(positions=self.positions)
         self.tiles = Tiles()
         self.rules = Rules()
 
@@ -32,7 +33,7 @@ class Game:
         sys.exit()
 
     def run(self) -> None:
-        self.tiles.get_tiles(positions=NoneTouching.positions)
+        self.tiles.get_tiles(positions=self.positions.positions)
 
         while self.running:
             self.draw_tiles()

@@ -7,15 +7,21 @@ GREY = (200, 200, 200)
 
 
 class Screen:
-    def __init__(self) -> None:
+    def __init__(self, positions: object) -> None:
         self.params = Parameters()
+        self.positions: object = positions
+        self.get_screen_geometry()
         self.get_screen()
         self.draw_background()
         self.get_rectangle()
         self.selected: bool = False
 
+    def get_screen_geometry(self) -> None:
+        self.canvas_width: int = self.params.x_offset * 2 + self.params.tile_width * self.positions.cols
+        self.canvas_height: int = self.params.y_offset * 2 + self.params.tile_height * self.positions.rows
+
     def get_screen(self) -> None:
-        self.screen = pygame.display.set_mode((self.params.canvas_width, self.params.canvas_height))
+        self.screen = pygame.display.set_mode((self.canvas_width, self.canvas_height))
 
     def draw_background(self) -> None:
         self.screen.fill(GREY)
