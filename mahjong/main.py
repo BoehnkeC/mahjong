@@ -33,7 +33,7 @@ class Game:
         sys.exit()
 
     def run(self) -> None:
-        self.tiles.get_tiles(positions=self.positions.positions)
+        self.tiles.get_tiles(positions=self.positions)
 
         while self.running:
             self.draw_tiles()

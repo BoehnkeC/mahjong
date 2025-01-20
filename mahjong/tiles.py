@@ -10,12 +10,15 @@ RED = (255, 0, 0)
 class Tiles:
     def __init__(self) -> None:
         self.tiles: list[Tile] | None = None
-        self.rules = Rules()  # rule set applies per tile
+        self.rules = Rules()  # rule set applies per tiles
         self.selected_tiles: list = []
 
-    def get_tiles(self, positions: list, draw: bool = True) -> None:
+    def get_tiles(self, positions: object, draw: bool = True) -> None:
         """Create tiles at pre-defined tile positions."""
-        self.tiles = [Tile(i, *p, draw=draw) for i, p in enumerate(positions)]
+        # loop over tile positions with positions.positions
+        # looop over tile faces with positions.faces
+        # unpack positions with *p[0] and faces with p[1]
+        self.tiles = [Tile(i, *p[0], p[1]) for i, p in enumerate(zip(positions.positions, positions.faces))]
 
     def check_event(self, event: pygame.event.Event):
         """Check if a tile was selected through a mouse button event."""
@@ -50,7 +53,7 @@ class Tiles:
 
 
 class Tile:
-    def __init__(self, index: int, x_offset: int, y_offset: int, draw: bool = True) -> None:
+    def __init__(self, index: int, x_offset: int, y_offset: int, face: str, draw: bool = True) -> None:
         self.params = Parameters()
         self.id = index
         self.name: str | None = None  # name of the tile, equivalent to the image file name
@@ -62,14 +65,14 @@ class Tile:
         self.selected = False  # selection is a persistent state until deselection
 
         if draw:
-            self.get_face()
+            self.get_face(face)
             self.overlay()
             self.get_outline()
 
-    def get_face(self) -> None:
+    def get_face(self, face: str) -> None:
         """Get the tile face, i.e. a drawable area entity."""
         # load image and optimize with convert
-        self.face = pygame.image.load(self.params.tiles_path.joinpath("hongzhong.png"))
+        self.face = pygame.image.load(self.params.tiles_path.joinpath(f"{face}.png"))
         self.face = self.face.convert_alpha()
         self.face = pygame.transform.scale(self.face, (self.width, self.height))
         self.name = "chun"
