@@ -75,7 +75,7 @@ class Tile:
         self.face = pygame.image.load(self.params.tiles_path.joinpath(f"{face}.png"))
         self.face = self.face.convert_alpha()
         self.face = pygame.transform.scale(self.face, (self.width, self.height))
-        self.name = "chun"
+        self.name = face
 
     def overlay(self) -> None:
         """Get the tiles transparent overlay used for selection."""
