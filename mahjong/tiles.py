@@ -34,7 +34,8 @@ class Tiles:
                 else:  # tile got clicked but deselected
                     self.selected_tiles.remove(tile)
 
-    def check_rules(self) -> None:
+    def apply_rules(self) -> None:
+        """Apply the rules to the selected tiles. Rules have been checked before."""
         if self.rules.broken:
             if self.rules.reason == Distribution.limit:
                 self.deselect()
@@ -43,6 +44,10 @@ class Tiles:
                 self.selected_tiles[0].deselect()
                 self.selected_tiles.remove(self.selected_tiles[0])
 
+        else:
+            if len(self.selected_tiles) == 2:
+                self.remove()
+
         self.rules.broken = False
 
     def deselect(self) -> None:
@@ -50,6 +55,13 @@ class Tiles:
         for tile in reversed(self.selected_tiles):
             tile.deselect()
             self.selected_tiles.remove(tile)
+
+    def remove(self) -> None:
+        """Remove selected pair of tiles from the game."""
+        for i in range(2):
+            self.tiles.remove(self.tiles[self.tiles.index(self.selected_tiles[i])])
+
+        self.deselect()
 
 
 class Tile:
