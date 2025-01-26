@@ -13,7 +13,7 @@ class Tiles:
         self.rules = Rules()  # rule set applies per tiles
         self.selected_tiles: list = []
 
-    def get_tiles(self, positions: object, draw: bool = True) -> None:
+    def init_tiles(self, positions: object, draw: bool = True) -> None:
         """Create tiles at pre-defined tile positions."""
         # loop over tile positions with positions.positions
         # looop over tile faces with positions.faces

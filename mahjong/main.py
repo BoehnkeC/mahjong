@@ -33,7 +33,7 @@ class Game:
         sys.exit()
 
     def run(self) -> None:
-        self.tiles.get_tiles(positions=self.positions)
+        self.tiles.init_tiles(positions=self.positions)
 
         while self.running:
             self.draw_tiles()
@@ -52,6 +52,8 @@ class Game:
             pygame.display.update()  # update the screen to show the color
 
     def draw_tiles(self) -> None:
+        self.screen.draw_background()  # redraw background to remove confirmed tiles
+
         for tile in self.tiles.tiles:
             self.screen.draw_tile(tile)
 
